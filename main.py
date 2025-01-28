@@ -33,6 +33,13 @@ def fetch_capacity(url):
         if capacity == "—":
             capacity = 0
 
+        # Konvertiere die Kapazität sicher zu einer Zahl
+        try:
+            capacity = int(capacity)
+        except ValueError:
+            print(f"Ungültige Kapazität: {capacity}")
+            return
+
         return capacity
 
     except Exception as e:
@@ -43,14 +50,15 @@ def fetch_capacity(url):
 def log_to_sheet(sheet, capacity):
     if capacity is not None:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        sheet.append_row([timestamp, capacity])
+        # Schreibe den Wert ins Google Sheet (inkl. konvertiertem Datum)
+        sheet.append_row([timestamp, capacity], value_input_option='USER_ENTERED')
         print(f"Daten gespeichert: {timestamp}, {capacity}")
     else:
         print("Keine Daten gespeichert, da keine Auslastung verfügbar war.")
 
 # 4. Hauptfunktion: Alle 30 Minuten ausführen
 def main():
-    url = "https://www.fitnesspark.ch/wp/wp-admin/admin-ajax.php?action=single_park_update_visitors&location_id=105&location_name=FP_Bern_City"
+    url = "https://www.fitnesspark.ch/wp/wp-admin/admin-ajax.php?action=single_park_update_visitors&park_id=856&location_id=105&location_name=FP_Bern_City"
 
     sheet_name = "Fitnesspark Auslastung"
     sheet = setup_google_sheets(sheet_name)
