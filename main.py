@@ -58,8 +58,7 @@ def main():
     while True:
         capacity = fetch_capacity(url)
         log_to_sheet(sheet, capacity)
-        time.sleep(1) 
-        #time.sleep(30 * 60)  # 30 Minuten warten
+        time.sleep(5* 60) # 5 Minuten warten, da die Auslastung scheinbar nicht so oft ändert
 
 if __name__ == "__main__":
     main()
