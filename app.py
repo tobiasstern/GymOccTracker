@@ -1,4 +1,6 @@
 import time
+from datetime import datetime
+import pytz
 import requests
 import gspread
 import os
@@ -86,7 +88,12 @@ def fetch_capacity(url):
 # 3. Daten in Google Sheet speichern
 def log_to_sheet(sheet, capacity):
     if capacity is not None:
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # Setze deine gewünschte Zeitzone (z. B. "Europe/Berlin")
+        local_tz = pytz.timezone("Europe/Zurich")
+
+        # Hole die aktuelle UTC-Zeit und konvertiere sie in die lokale Zeitzone
+        timestamp = datetime.now(pytz.utc).astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
+        
         # Schreibe den Wert ins Google Sheet (inkl. konvertiertem Datum)
         sheet.append_row([timestamp, capacity], value_input_option='USER_ENTERED')
         print(f"Daten gespeichert: {timestamp}, {capacity}")
