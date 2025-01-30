@@ -10,22 +10,35 @@ from datetime import datetime
 def get_google_credentials():
     """
     Nutzt entweder die Datei `credentials.json` (lokal) oder das Secret aus einer Umgebungsvariable (OpenShift).
+    Fügt Debugging hinzu, um Fehler bei fehlender oder leerer Umgebungsvariable zu erkennen.
     """
     credentials_path = "credentials.json"
-    
-    if os.path.exists(credentials_path):  
-        # Lokale Datei existiert -> Diese verwenden
+
+    # Lokale Datei zuerst prüfen
+    if os.path.exists(credentials_path):
         print("Lade lokale credentials.json Datei...")
         return ServiceAccountCredentials.from_json_keyfile_name(credentials_path)
-    
-    # Falls keine Datei da ist, versuche die Umgebungsvariable zu nutzen
+
+    # Falls keine Datei, prüfe die Umgebungsvariable
     credentials_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
-    
+
+    # Debugging: Zeige die ersten 100 Zeichen der Variable (aber nicht das ganze JSON)
     if credentials_json:
-        print("Lade Google Credentials aus OpenShift Secret...")
+        print(f" Lade Google Credentials aus OpenShift Secret... (Erste 100 Zeichen: {credentials_json[:100]}...)")
+    else:
+        print("FEHLER: Umgebungsvariable GOOGLE_CREDENTIALS_JSON ist nicht gesetzt oder leer!")
+
+    # Falls Variable leer ist, Fehlermeldung ausgeben
+    if not credentials_json:
+        raise Exception("Keine gültigen Google Credentials gefunden! Bitte prüfen, ob das Secret richtig gesetzt ist.")
+
+    # JSON-Daten umwandeln
+    try:
         return ServiceAccountCredentials.from_json_keyfile_dict(json.loads(credentials_json))
-    
-    raise Exception("Keine gültigen Google Credentials gefunden!")
+    except json.JSONDecodeError as e:
+        print(f"JSON-Fehler: {e}")
+        print("Inhalt der Umgebungsvariable ist kein gültiges JSON. Bitte prüfen, ob das Secret richtig gespeichert wurde.")
+        raise
 
 
 # 1. Google Sheets einrichten
