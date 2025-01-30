@@ -11,7 +11,7 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Stelle sicher, dass die credentials.json nicht vergessen wird
-COPY credentials.json /app/credentials.json
+# COPY credentials.json /app/credentials.json
 
 # Setze den Befehl, der beim Start des Containers ausgeführt wird
 CMD ["python", "app.py"]
