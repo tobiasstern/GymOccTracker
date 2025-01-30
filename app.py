@@ -1,13 +1,37 @@
 import time
 import requests
 import gspread
+import os
+import json
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
+
+# 0
+def get_google_credentials():
+    """
+    Nutzt entweder die Datei `credentials.json` (lokal) oder das Secret aus einer Umgebungsvariable (OpenShift).
+    """
+    credentials_path = "credentials.json"
+    
+    if os.path.exists(credentials_path):  
+        # Lokale Datei existiert -> Diese verwenden
+        print("Lade lokale credentials.json Datei...")
+        return ServiceAccountCredentials.from_json_keyfile_name(credentials_path)
+    
+    # Falls keine Datei da ist, versuche die Umgebungsvariable zu nutzen
+    credentials_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
+    
+    if credentials_json:
+        print("Lade Google Credentials aus OpenShift Secret...")
+        return ServiceAccountCredentials.from_json_keyfile_dict(json.loads(credentials_json))
+    
+    raise Exception("Keine gültigen Google Credentials gefunden!")
+
 
 # 1. Google Sheets einrichten
 def setup_google_sheets(sheet_name):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    credentials = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    credentials = get_google_credentials()
     client = gspread.authorize(credentials)
 
     try:
