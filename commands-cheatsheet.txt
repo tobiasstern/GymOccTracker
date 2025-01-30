@@ -1,0 +1,5 @@
+#build docker container
+docker build -t fitness-tracker .
+
+#run docker container
+docker run -it --rm fitness-tracker

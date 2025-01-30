@@ -8,6 +8,23 @@ import json
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
+# Standard-Intervall auf 5 Minuten setzen
+DEFAULT_INTERVAL = 60  # 300 Sekunden = 5 Minuten
+
+def get_check_interval():
+    """Liest das Prüf-Intervall aus der Umgebungsvariable oder nutzt den Standardwert."""
+    try:
+        interval = int(os.getenv("CHECK_INTERVAL", DEFAULT_INTERVAL))  # Default 5 Minuten
+        if interval < 10:  # Verhindert zu kleine Werte (z. B. 1 Sekunde)
+            print("WARNUNG: CHECK_INTERVAL ist zu klein, setze auf 10 Sekunden")
+            return 10
+        print(f"Prüf-Intervall: Alle {interval} Sekunden")
+        return interval
+    except ValueError:
+        print("Ungültiger CHECK_INTERVAL-Wert, nutze Standard (5 Minuten)")
+        return DEFAULT_INTERVAL
+
+
 # 0
 def get_google_credentials():
     """
@@ -110,7 +127,11 @@ def main():
     while True:
         capacity = fetch_capacity(url)
         log_to_sheet(sheet, capacity)
-        time.sleep(5* 60) # 5 Minuten warten, da die Auslastung scheinbar nicht so oft ändert
+
+        interval = get_check_interval()  # Laufzeit-Check des Intervalls
+        time.sleep(interval)  # Warte die konfigurierte Zeit
+
+        #time.sleep(5* 60) # 5 Minuten warten, da die Auslastung scheinbar nicht so oft ändert
 
 if __name__ == "__main__":
     main()
