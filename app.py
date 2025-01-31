@@ -18,10 +18,10 @@ def get_check_interval():
         if interval < 10:  # Verhindert zu kleine Werte (z. B. 1 Sekunde)
             print("WARNUNG: CHECK_INTERVAL ist zu klein, setze auf 10 Sekunden")
             return 10
-        print(f"Prüf-Intervall: Alle {interval} Sekunden")
+        print(f"Nächste Prüfung in {interval} Sekunden")
         return interval
     except ValueError:
-        print("Ungültiger CHECK_INTERVAL-Wert, nutze Standard (5 Minuten)")
+        print(f"Ungültiger CHECK_INTERVAL-Wert, nutze Standard ({DEFAULT_INTERVAL} Sekunden)")
         return DEFAULT_INTERVAL
 
 
@@ -83,7 +83,9 @@ def fetch_capacity(url):
     try:
         response = requests.get(url)
         response.raise_for_status()
-        capacity = response.text
+        capacity = response.text.strip()  # Entfernt unnötige Leerzeichen oder Zeilenumbrüche
+
+        print(f"API-Antwort erhalten: {capacity}")  # Debugging-Ausgabe
 
         # Wenn die Kapazität "-" ist, ersetze sie durch "0"
         if capacity == "—":
@@ -93,14 +95,15 @@ def fetch_capacity(url):
         try:
             capacity = int(capacity)
         except ValueError:
-            print(f"Ungültige Kapazität: {capacity}")
-            return
+            print(f"Ungültige Kapazität (keine Zahl): '{capacity}'")  # Jetzt wird der fehlerhafte Wert geloggt
+            return None
 
         return capacity
 
-    except Exception as e:
+    except requests.RequestException as e:
         print(f"Fehler beim Abrufen der Daten: {e}")
         return None
+
 
 # 3. Daten in Google Sheet speichern
 def log_to_sheet(sheet, capacity):
