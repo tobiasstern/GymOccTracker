@@ -65,16 +65,16 @@ def get_google_credentials():
 
 
 # 1. Google Sheets einrichten
-def setup_google_sheets(sheet_name):
+def setup_google_sheets(sheet_name, worksheet_name):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     credentials = get_google_credentials()
     client = gspread.authorize(credentials)
 
     try:
-        sheet = client.open(sheet_name).sheet1
+        sheet = client.open(sheet_name).worksheet(worksheet_name)
     except gspread.SpreadsheetNotFound:
         print("Google Sheet wurde nicht gefunden. Ein neues wird erstellt...")
-        sheet = client.create(sheet_name).sheet1
+        sheet = client.create(sheet_name).worksheet(worksheet_name)
         sheet.append_row(["Timestamp", "Auslastung (%)"])
     except Exception as e:
         print(f"Fehler beim Zugriff auf Google Sheets: {e}")
@@ -129,7 +129,8 @@ def main():
     url = "https://www.fitnesspark.ch/wp/wp-admin/admin-ajax.php?action=single_park_update_visitors&park_id=856&location_id=105&location_name=FP_Bern_City"
 
     sheet_name = "Fitnesspark Auslastung"
-    sheet = setup_google_sheets(sheet_name)
+    worksheet_name = "Fitnesspark-Bern"
+    sheet = setup_google_sheets(sheet_name, worksheet_name)
 
     while True:
         capacity = fetch_capacity(url)
