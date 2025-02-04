@@ -1,18 +1,15 @@
-# Basis-Image mit Python
+# Basis-Image mit Python 3.9
 FROM python:3.9-slim
 
 # Arbeitsverzeichnis im Container setzen
 WORKDIR /app
 
-# Kopiere alle Dateien ins Arbeitsverzeichnis
-COPY gym_scripts/ /app/gym_scripts/
-COPY requirements.txt /app/
-
-# Installiere Python-Abhängigkeiten
+# Abhängigkeiten kopieren und installieren
+COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Stelle sicher, dass die credentials.json nicht vergessen wird
-# COPY credentials.json /app/credentials.json
+# Alle Gym-Skripte kopieren
+COPY gym_scripts/ /app/gym_scripts/
 
-# Setze den Befehl, der beim Start des Containers ausgeführt wird
-CMD ["python", "-m", "gym_scripts"]
+# Standardmäßig läuft das Image ohne ein spezifisches Gym-Skript
+CMD ["python", "--version"]

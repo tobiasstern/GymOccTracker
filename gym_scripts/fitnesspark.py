@@ -10,8 +10,8 @@ from datetime import datetime
 import sys
 
 sys.stdout.reconfigure(line_buffering=True) # configures all prin()-statements to have the option flush=True, because without sometimes logging is not consistent
-GYM_NAME = "Fitnesspark Bern City"
-URL = "https://www.fitnesspark.ch/api/endpoint"
+GYM_NAME = "Fitnesspark-Bern"
+URL = "https://www.fitnesspark.ch/wp/wp-admin/admin-ajax.php?action=single_park_update_visitors&park_id=856&location_id=105&location_name=FP_Bern_City"
 GSHEET_NAME = "Fitnesspark Auslastung"
 
 # Standard-Intervall auf 5 Minuten setzen
