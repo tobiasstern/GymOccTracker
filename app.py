@@ -7,6 +7,10 @@ import os
 import json
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
+import sys
+
+sys.stdout.reconfigure(line_buffering=True) # configures all prin()-statements to have the option flush=True, because without sometimes logging is not consistent
+
 
 # Standard-Intervall auf 5 Minuten setzen
 DEFAULT_INTERVAL = 60  # 300 Sekunden = 5 Minuten
