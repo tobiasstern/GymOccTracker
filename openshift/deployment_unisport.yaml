@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gym-unisport
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gym-unisport
+  template:
+    metadata:
+      labels:
+        app: gym-unisport
+    spec:
+      containers:
+      - name: gym-unisport
+        image: meine-docker-registry/gym-tracker:latest
+        command: ["python", "gym_scripts/unisport.py"]
+        env:
+        - name: GOOGLE_CREDENTIALS_JSON
+          valueFrom:
+            secretKeyRef:
+              name: google-credentials
+              key: GOOGLE_CREDENTIALS_JSON
+        - name: CHECK_INTERVAL_UNISPORT_BERN
+          value: "300"
