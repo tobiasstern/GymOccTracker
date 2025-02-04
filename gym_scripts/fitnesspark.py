@@ -10,7 +10,9 @@ from datetime import datetime
 import sys
 
 sys.stdout.reconfigure(line_buffering=True) # configures all prin()-statements to have the option flush=True, because without sometimes logging is not consistent
-
+GYM_NAME = "Fitnesspark Bern City"
+URL = "https://www.fitnesspark.ch/api/endpoint"
+GSHEET_NAME = "Fitnesspark Auslastung"
 
 # Standard-Intervall auf 5 Minuten setzen
 DEFAULT_INTERVAL = 60  # 300 Sekunden = 5 Minuten
@@ -65,16 +67,16 @@ def get_google_credentials():
 
 
 # 1. Google Sheets einrichten
-def setup_google_sheets(sheet_name):
+def setup_google_sheets():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     credentials = get_google_credentials()
     client = gspread.authorize(credentials)
 
     try:
-        sheet = client.open(sheet_name).sheet1
+        sheet = client.open(GSHEET_NAME).worksheet(GYM_NAME)
     except gspread.SpreadsheetNotFound:
         print("Google Sheet wurde nicht gefunden. Ein neues wird erstellt...")
-        sheet = client.create(sheet_name).sheet1
+        sheet = client.create(GSHEET_NAME).worksheet(GYM_NAME)
         sheet.append_row(["Timestamp", "Auslastung (%)"])
     except Exception as e:
         print(f"Fehler beim Zugriff auf Google Sheets: {e}")
@@ -83,9 +85,9 @@ def setup_google_sheets(sheet_name):
     return sheet
 
 # 2. Auslastung von URL abrufen
-def fetch_capacity(url):
+def fetch_capacity():
     try:
-        response = requests.get(url)
+        response = requests.get(URL)
         response.raise_for_status()
         capacity = response.text.strip()  # Entfernt unnötige Leerzeichen oder Zeilenumbrüche
 
@@ -105,7 +107,7 @@ def fetch_capacity(url):
         return capacity
 
     except requests.RequestException as e:
-        print(f"Fehler beim Abrufen der Daten: {e}")
+        print(f"Fehler beim Abrufen für {GYM_NAME}: {e}")
         return None
 
 
@@ -126,13 +128,10 @@ def log_to_sheet(sheet, capacity):
 
 # 4. Hauptfunktion: Alle 30 Minuten ausführen
 def main():
-    url = "https://www.fitnesspark.ch/wp/wp-admin/admin-ajax.php?action=single_park_update_visitors&park_id=856&location_id=105&location_name=FP_Bern_City"
-
-    sheet_name = "Fitnesspark Auslastung"
-    sheet = setup_google_sheets(sheet_name)
+    sheet = setup_google_sheets()
 
     while True:
-        capacity = fetch_capacity(url)
+        capacity = fetch_capacity()
         log_to_sheet(sheet, capacity)
 
         interval = get_check_interval()  # Laufzeit-Check des Intervalls
