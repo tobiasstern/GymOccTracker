@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gym-fitnesspark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gym-fitnesspark
+  template:
+    metadata:
+      labels:
+        app: gym-fitnesspark
+    spec:
+      containers:
+      - name: gym-fitnesspark
+        image: meine-docker-registry/gym-tracker:latest
+        command: ["python", "gym_scripts/fitnesspark.py"]
+        env:
+        - name: GOOGLE_CREDENTIALS_JSON
+          valueFrom:
+            secretKeyRef:
+              name: google-credentials
+              key: GOOGLE_CREDENTIALS_JSON
+        - name: CHECK_INTERVAL_FP_BE
+          value: "600"
