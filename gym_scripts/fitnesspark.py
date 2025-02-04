@@ -20,14 +20,14 @@ DEFAULT_INTERVAL = 60  # 300 Sekunden = 5 Minuten
 def get_check_interval():
     """Liest das Prüf-Intervall aus der Umgebungsvariable oder nutzt den Standardwert."""
     try:
-        interval = int(os.getenv("CHECK_INTERVAL", DEFAULT_INTERVAL))  # Default 5 Minuten
+        interval = int(os.getenv("CHECK_INTERVAL_FP_BE", DEFAULT_INTERVAL))  # Default 5 Minuten
         if interval < 10:  # Verhindert zu kleine Werte (z. B. 1 Sekunde)
-            print("WARNUNG: CHECK_INTERVAL ist zu klein, setze auf 10 Sekunden")
+            print("WARNUNG: CHECK_INTERVAL_FP_BE ist zu klein, setze auf 10 Sekunden")
             return 10
         print(f"Nächste Prüfung in {interval} Sekunden")
         return interval
     except ValueError:
-        print(f"Ungültiger CHECK_INTERVAL-Wert, nutze Standard ({DEFAULT_INTERVAL} Sekunden)")
+        print(f"Ungültiger CHECK_INTERVAL_FP_BE-Wert, nutze Standard ({DEFAULT_INTERVAL} Sekunden)")
         return DEFAULT_INTERVAL
 
 
