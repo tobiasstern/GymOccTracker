@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 sys.stdout.reconfigure(line_buffering=True)
 
 # Gym-spezifische Konstanten
-GYM_NAME = "Unisport-Zssw"
+GYM_NAME = "UniBern-Zssw"
 URL = "https://www.zssw.unibe.ch/usp/zms/templates/crowdmonitoring/_display-spaces-zssw.php"
 GSHEET_NAME = "Fitnesspark Auslastung"  # Gemeinsame Google Sheets-Datei
 CSS_SELECTOR = ".go-stop-display_footer"  # Selektor, der den Text "33 von 80" enthält

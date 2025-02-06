@@ -123,7 +123,7 @@ def log_to_sheet(sheet, capacity):
         local_tz = pytz.timezone("Europe/Zurich")
         timestamp = datetime.now(pytz.utc).astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
         sheet.append_row([timestamp, capacity], value_input_option='USER_ENTERED')
-        print(f"Daten gespeichert: {timestamp}, {capacity}", flush=True)
+        print(f"{GYM_NAME}: Daten gespeichert: {timestamp}, {capacity}", flush=True)
     else:
         print("Keine Daten gespeichert, da keine Auslastung verfügbar war.", flush=True)
 

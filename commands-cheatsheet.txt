@@ -13,19 +13,4 @@ oc logs -f <pod-name>
 
 oc rollout restart deployment/gym-unisport
 
-
-
-/gym-tracker
-│── Dockerfile
-│── requirements.txt
-│── credentials.json  (ausgeklammert mit .gitignore)
-│── gym_scripts/
-│   ├── fitnesspark.py
-│   ├── unisport.py
-│   ├── gym3.py
-│── openshift/
-│   ├── deployment_fitnesspark.yaml
-│   ├── deployment_unisport.yaml
-│   ├── cronjob_fitnesspark.yaml
-│   ├── cronjob_unisport.yaml
-│   ├── buildconfig.yaml
+oc describe pod xy
